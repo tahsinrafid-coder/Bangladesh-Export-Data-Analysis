@@ -1,29 +1,29 @@
-```markdown
-## 🏗️ Architecture & Pipeline Workflow
+# Bangladesh Apparel Export Data Analysis
 
-My data pipeline follows a structured **End-to-End ETL** pattern, transforming completely unformatted public reports into structured business metrics:
+Bangladesh is a globally recognized leader in the apparel export sector. But here's the reality: while everyone talks about our knit and woven exports, getting your hands on clean, centralized raw data to actually analyze is a massive headache. 
 
-### 📥 1. Extract
-> **Raw EPB Files** ➔ **Python (Pandas)**
-* Handled unstructured text formatting using Python's `glob` and `os` libraries.
-* Applied regular expressions (`regex`) to filter relevant rows and isolate target garment fields.
+Coming from a background in textile sales and marketing—and managing accounts for global buyers—I know exactly how valuable this data is. So, as part of my transition into a Data Analyst role, I decided to build a solution myself. 
 
-### ⚙️ 2. Transform
-> **Data Standardizing** ➔ **Dynamic Merging**
-* Executed data cleaning techniques like forward-filling missing country data and parsing 6-digit HS codes.
-* Built a dynamic scripting step that read the raw filenames, extracted the corresponding *Fiscal Year*, and appended it to the records before compiling individual sheets into a single master file.
+What I initially thought would be a quick project turned into a hard-fought, real-world lesson in data engineering!
 
-### 📤 3. Load
-> **Unified File** ➔ **PostgreSQL Relational Storage**
-* Migrated the compiled data into a data warehouse layer.
-* Cleaned text formatting errors on the database side and safely cast string currency indicators (`TEXT`) into quantitative metrics (`NUMERIC`).
+## 🛠️ The Tools I Used
+I built this entire process from scratch using:
+* **VS Code:** My main environment for writing and debugging the Python scripts.
+* **Python (`pandas`, `re`, `glob`):** To aggressively clean, parse, and combine a decade's worth of messy CSV files.
+* **PostgreSQL:** My database of choice for writing the queries, aggregating the data, and running window functions.
+* **Power BI:** (Coming soon for the dashboarding phase!)
 
-### 🔍 4. Analyze
-> **SQL Queries** ➔ **Actionable Analytical Frameworks**
-* **Segmentation:** Used conditional logic (`CASE WHEN`) to split messy item strings into definitive **Knit vs. Woven** market categories.
-* **Trend Analysis:** Used advanced window functions (`LAG()`) to isolate pandemic-era dips and calculate exact **Year-over-Year (YoY) Growth %**.
-* **Long-Term Performance:** Implemented analytical CTEs using `ROW_NUMBER()` to calculate **Compound Annual Growth Rates (CAGR)** across a decade of exports.
+## 📂 The Problem: Unusable Source Data
+* **The Hunt:** I sourced the raw export data directly from the [Export Promotion Bureau (EPB)](https://epb.gov.bd/).
+* **The Reality:** The source files spanning 2011 to 2025 were unformatted, wildly inconsistent, and impossible to query out of the box. (You can see just how chaotic the originals were in the [raw source files](link-to-folder) directory).
 
-### 📊 5. Visualize (Coming Soon)
-> **PostgreSQL Views** ➔ **Power BI Dashboard**
-* Connecting saved SQL analysis views directly to Power BI to track brand market-shares, category demand peaks, and key account performances.
+## 🏗️ How I Built the Pipeline
+To get this data into a state where I could actually run queries on it, I had to build a structured workflow:
+
+1. **Wrangling in Python:** I wrote a custom cleaning script in VS Code. I had to use regex to extract the 6-digit HS codes, forward-fill missing country codes, and standardize the numeric values so the database wouldn't reject them.
+2. **Combining the Years:** Because every fiscal year was trapped in its own isolated file, I wrote a second script to loop through my directory, dynamically extract the fiscal year from the filename, and stack everything into one unified `combined_data.csv`.
+3. **Loading into PostgreSQL:** With a clean master dataset ready, I designed a schema in PostgreSQL and imported everything.
+4. **SQL Analysis:** Finally, I was able to write the queries I actually wanted to run. I used CTEs and window functions to calculate YoY growth, CAGR, and track the historical performance of Denim, Woven, and Knit categories.
+
+## 🚀 What's Next
+I'm currently writing more advanced SQL queries and will be connecting PostgreSQL to Power BI to build an interactive dashboard shortly.
